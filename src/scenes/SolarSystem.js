@@ -18,8 +18,7 @@ const createScene = (canvas) => {
   scene.clearColor = new Color3(0, 0, 0); // Change scene background color
   const camera = new ArcRotateCamera('camera', 0, 0, 15, Vector3.Zero(), scene); // Create camera
   camera.attachControl(canvas); // Let the user move the camera
-  //  camera.upperRadiusLimit = 50;
-  //  camera.maxZ = 30;
+  camera.upperRadiusLimit = 50;
   const light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene); // Create light
   light.intensity = 0.5;
   light.groundColor = new Color3(0, 0, 1);
@@ -42,6 +41,19 @@ const createScene = (canvas) => {
   const planet1 = MeshBuilder.CreateSphere('planet1', { segments: 16, diameter: 1 }, scene);
   planet1.material = planet1Material;
   planet1.position.x = 4;
+  planet1.orbit = {
+    radius: planet1.position.x,
+    speed: 0.01,
+    angle: 0,
+  };
+  const planet2 = MeshBuilder.CreateSphere('planet2', { segments: 16, diameter: 1 }, scene);
+  planet2.material = planet1Material;
+  planet2.position.x = 6;
+  planet2.orbit = {
+    radius: planet2.position.x,
+    speed: -0.01,
+    angle: 0,
+  };
 
   // Create skybox
   const skybox = new MeshBuilder.CreateBox('skybox', { size: 1000.0 }, scene);
@@ -54,6 +66,16 @@ const createScene = (canvas) => {
   skyBoxMaterial.diffuseColor = new Color3(0, 0, 0);
   skybox.material = skyBoxMaterial;
 
+  // Animation
+  scene.beforeRender = () => {
+    planet1.position.x = planet1.orbit.radius * Math.sin(planet1.orbit.angle);
+    planet1.position.z = planet1.orbit.radius * Math.cos(planet1.orbit.angle);
+    planet1.orbit.angle += planet1.orbit.speed;
+
+    planet2.position.x = planet2.orbit.radius * Math.sin(planet2.orbit.angle);
+    planet2.position.z = planet2.orbit.radius * Math.cos(planet2.orbit.angle);
+    planet2.orbit.angle += planet2.orbit.speed;
+  };
   engine.runRenderLoop(() => {
     scene.render();
   });

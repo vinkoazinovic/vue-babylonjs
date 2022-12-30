@@ -28,6 +28,8 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+    outline: none;
+      -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
   }
 }
 </style>
